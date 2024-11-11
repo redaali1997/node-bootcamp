@@ -55,6 +55,19 @@ app.post('/api/courses',
         res.status(201).json(course)
     })
 
+app.patch('/api/courses/:courseId', (req, res) => {
+    let course = courses.find(course => course.id == req.params.courseId)
+
+    if (!course) return res.status(404).json({ msg: 'course not found' })
+
+    course = {
+        ...course,
+        ...req.body
+    }
+
+    return res.status(200).json(course)
+})
+
 app.listen(5000, () => {
     console.log('listening on port 5000');
 })
