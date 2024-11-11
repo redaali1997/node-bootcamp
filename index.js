@@ -1,4 +1,5 @@
 const express = require('express')
+const { body, validationResult } = require('express-validator')
 
 const app = express()
 
@@ -30,14 +31,29 @@ app.get('/api/courses/:courseId', (req, res) => {
     res.json(course)
 })
 
-app.post('/api/courses', (req, res) => {
-    courses.push({
-        id: courses.length + 1,
-        ...req.body
-    })
+app.post('/api/courses',
+    [
+        body('name')
+            .notEmpty().withMessage('Name is required')
+            .isLength({ min: 2 }).withMessage('Length must be more than 2 chars'),
+        body('price')
+            .notEmpty()
+            .isNumeric()
+    ], (req, res) => {
+        const errors = validationResult(req)
 
-    res.status(201).json(courses)
-})
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors.array())
+        }
+
+        const course = {
+            id: courses.length + 1,
+            ...req.body
+        }
+        courses.push(course)
+
+        res.status(201).json(course)
+    })
 
 app.listen(5000, () => {
     console.log('listening on port 5000');
