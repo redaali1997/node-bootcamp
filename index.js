@@ -5,7 +5,7 @@ const app = express()
 
 app.use(express.json())
 
-const courses = [
+let courses = [
     {
         id: 1,
         name: 'Javascript course',
@@ -17,6 +17,7 @@ const courses = [
         price: 1000
     }
 ]
+
 // get all courses
 app.get('/api/courses', (req, res) => {
     res.status(200).json(courses)
@@ -31,6 +32,7 @@ app.get('/api/courses/:courseId', (req, res) => {
     res.json(course)
 })
 
+// create new course
 app.post('/api/courses',
     [
         body('name')
@@ -55,6 +57,7 @@ app.post('/api/courses',
         res.status(201).json(course)
     })
 
+// update course
 app.patch('/api/courses/:courseId', (req, res) => {
     let course = courses.find(course => course.id == req.params.courseId)
 
@@ -66,6 +69,13 @@ app.patch('/api/courses/:courseId', (req, res) => {
     }
 
     return res.status(200).json(course)
+})
+
+// delete course
+app.delete('/api/courses/:courseId', (req, res) => {
+    courses = courses.filter(course => course.id != req.params.courseId)
+
+    return res.status(200).json(courses)
 })
 
 app.listen(5000, () => {
